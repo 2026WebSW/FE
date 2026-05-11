@@ -1,73 +1,65 @@
-# React + TypeScript + Vite
+# 재난 복구 활동 시각화 및 후원 연결 플랫폼
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+2026-1 OpensourceWebSoftware FE
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 주요 기능
 
-## React Compiler
+- 한국 지도 위에 현재 진행 중인 재난 사건 표시
+- 사건별 공식 정보(기상특보, 재난문자)와 관련 기사 요약 제공
+- 현장 복구 단체 정보 및 후원·봉사 링크 연결
+- 재난 유형, 진행 상태, 도움 가능 여부 필터 기능
+- 운영자 등록 화면을 통한 단체 및 사건 정보 수동 관리
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 기술 스택
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| 구분 | 사용 기술 |
+|------|-----------|
+| 프레임워크 | React (Vite) |
+| 언어 | TypeScript |
+| 스타일링 | CSS Modules |
+| 라우팅 | React Router DOM |
+| 지도 | Kakao Maps API |
+| 백엔드 | Spring Boot (별도 레포) |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 프로젝트 구조
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── Map/        # 지도 관련 컴포넌트
+│   ├── Panel/      # 사건 상세 패널
+│   ├── Modal/      # hover 모달
+│   └── Filter/     # 필터 컴포넌트
+├── pages/
+│   ├── Landing.tsx   # 랜딩 화면
+│   ├── MapMain.tsx   # 지도 메인 화면
+│   └── Admin.tsx     # 운영자 관리 화면
+├── data/           # 더미 데이터
+└── styles/         # 공통 스타일
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 실행 방법
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 저장소 클론
+git clone https://github.com/...
+
+# 패키지 설치
+cd fe
+npm install
+
+# 개발 서버 실행
+npm run dev
 ```
+
+실행 후 브라우저에서 `http://localhost:5173` 접속
+
+---
