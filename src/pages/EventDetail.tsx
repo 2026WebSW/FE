@@ -50,141 +50,130 @@ export default function EventDetail() {
         </div>
       </header>
 
-      {/* 사건 제목 바 */}
+      {/* 사건 제목 바 — 히어로 이미지 위에 글자 오버레이 */}
       <div style={s.titleBar}>
-        <button onClick={() => navigate('/map')} style={s.backBtn}>← Back to Map</button>
-        <div style={s.titleMain}>
-          <span style={{ ...s.riskBadge, background: cfg.bgColor, color: cfg.color, border: `1px solid ${cfg.color}44` }}>
-            {cfg.label.toUpperCase()} RISK
-          </span>
-          <h1 style={s.eventTitle}>{event.title.toUpperCase()}</h1>
-        </div>
-        <div style={s.titleMeta}>
-          <span>📍 {event.region_name} &nbsp;·&nbsp; {disasterTypeLabels[event.disaster_type]}</span>
-          <span>🕐 Last Updated: {timeAgo(event.updated_at)}</span>
-        </div>
-        <div style={s.titleActions}>
-          <button style={s.actionBtn}>↗ 공유</button>
-          <button style={s.actionBtnPrimary}>📊 공식 보고서 확인</button>
+        <img
+          src={`https://picsum.photos/seed/${event.event_id}/1600/260`}
+          alt=""
+          style={s.titleBgImg}
+        />
+        <div style={s.titleOverlay} />
+        <div style={s.titleContent}>
+          <button onClick={() => navigate('/map')} style={s.backBtn}>← Back to Map</button>
+          <div style={s.titleMain}>
+            <span style={{ ...s.riskBadge, background: cfg.bgColor, color: cfg.color, border: `1px solid ${cfg.color}44` }}>
+              {cfg.label.toUpperCase()} RISK
+            </span>
+            <h1 style={s.eventTitle}>{event.title.toUpperCase()}</h1>
+          </div>
+          <div style={s.titleMeta}>
+            <span>📍 {event.region_name} &nbsp;·&nbsp; {disasterTypeLabels[event.disaster_type]}</span>
+            <span style={{ color: stCfg.color }}>● {stCfg.label}</span>
+            <span>{disasterTypeIcons[event.disaster_type]} {disasterTypeLabels[event.disaster_type]}</span>
+            <span>🕐 Last Updated: {timeAgo(event.updated_at)}</span>
+          </div>
+          <div style={s.titleSummary}>{event.official_summary}</div>
+          <div style={s.titleActions}>
+            <button style={s.actionBtn}>↗ 공유</button>
+            <button style={s.actionBtnPrimary}>📊 공식 보고서 확인</button>
+          </div>
         </div>
       </div>
 
       {/* 본문 3열 */}
       <div style={s.body}>
-        {/* 좌측: 지도 미니 + 요약 */}
-        <div style={s.colLeft}>
-          <div style={s.miniMapPlaceholder}>
-            <div style={s.liveRegionBadge}>🔴 LIVE: 활성 위험 구역</div>
-            <div style={s.miniMapCoords}>
-              <div style={s.coordBadge}>
-                <div style={{ fontSize: 10, color: '#64748b' }}>📍 좌표</div>
-                <div style={{ fontSize: 12, color: '#e2e8f0' }}>{event.center_lat.toFixed(4)}° N, {event.center_lng.toFixed(4)}° E</div>
-                <div style={{ fontSize: 11, color: '#64748b' }}>{event.region_name}</div>
+        {/* 1열: 공식 리포트 */}
+        <div style={s.col}>
+          <section style={s.section}>
+            <div style={s.sectionHeader}>
+              <span style={s.sectionIcon}>🛡️</span>
+              <span style={s.sectionTitle}>공식 리포트 및 지침</span>
+              <div style={s.livePulse}>
+                <span style={s.liveDot} />
               </div>
             </div>
-            <div style={s.warningOrb}>
-              <span style={{ fontSize: 28 }}>⚠️</span>
-            </div>
-          </div>
-
-          <div style={s.summaryCard}>
-            <div style={s.cardLabel}>공식 요약</div>
-            <p style={s.summaryText}>{event.official_summary}</p>
-            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <span style={{ ...s.statusPill, color: stCfg.color, background: `${stCfg.color}18`, border: `1px solid ${stCfg.color}44` }}>
-                ● {stCfg.label}
-              </span>
-              <span style={{ ...s.statusPill, color: '#818cf8', background: 'rgba(129,140,248,0.1)', border: '1px solid rgba(129,140,248,0.3)' }}>
-                {disasterTypeIcons[event.disaster_type]} {disasterTypeLabels[event.disaster_type]}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* 중앙: Live Coverage (공식정보 + 기사) */}
-        <div style={s.colCenter}>
-          {/* 공식 정보 */}
-          {officialUpdates.length > 0 && (
-            <section style={s.section}>
-              <div style={s.sectionHeader}>
-                <span style={s.sectionIcon}>🛡️</span>
-                <span style={s.sectionTitle}>공식 리포트 및 지침</span>
-                <div style={{ ...s.livePulse }}>
-                  <span style={s.liveDot} />
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {officialUpdates.map(upd => (
-                  <div key={upd.update_id} style={s.officialCard}>
-                    <div style={s.officialCardTop}>
-                      <span style={s.officialSource}>{upd.source_name}</span>
-                      <span style={s.officialTime}>{timeAgo(upd.issued_at)}</span>
-                    </div>
-                    <div style={s.officialTitle}>{upd.title}</div>
-                    <p style={s.officialSummary}>{upd.summary}</p>
-                    {upd.original_link && (
-                      <a href={upd.original_link} target="_blank" rel="noopener noreferrer" style={s.officialLink}>
-                        원문 보기 →
-                      </a>
-                    )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {officialUpdates.map(upd => (
+                <div key={upd.update_id} style={s.officialCard}>
+                  <div style={s.officialCardTop}>
+                    <span style={s.officialSource}>{upd.source_name}</span>
+                    <span style={s.officialTime}>{timeAgo(upd.issued_at)}</span>
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* 관련 기사 */}
-          {articles.length > 0 && (
-            <section style={s.section}>
-              <div style={s.sectionHeader}>
-                <span style={s.sectionIcon}>🌐</span>
-                <span style={s.sectionTitle}>관련 뉴스 피드</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {articles.map(art => (
-                  <a key={art.article_id} href={art.url} target="_blank" rel="noopener noreferrer" style={s.articleCard}>
-                    <div style={s.articleTop}>
-                      <span style={s.articlePublisher}>{art.publisher}</span>
-                      <span style={s.articleTime}>{timeAgo(art.published_at)}</span>
-                    </div>
-                    <div style={s.articleTitle}>{art.title}</div>
-                    <p style={s.articleSummary}>{art.summary}</p>
-                    <div style={s.articleReadMore}>기사 전문 보기 →</div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
+                  <div style={s.officialTitle}>{upd.title}</div>
+                  <p style={s.officialSummary}>{upd.summary}</p>
+                  {upd.original_link && (
+                    <a href={upd.original_link} target="_blank" rel="noopener noreferrer" style={s.officialLink}>
+                      원문 보기 →
+                    </a>
+                  )}
+                </div>
+              ))}
+              {officialUpdates.length === 0 && (
+                <div style={{ fontSize: 13, color: '#475569', textAlign: 'center', padding: '24px 0' }}>
+                  등록된 공식 리포트가 없습니다
+                </div>
+              )}
+            </div>
+          </section>
         </div>
 
-        {/* 우측: 후원 */}
+        {/* 2열: 관련 뉴스 피드 */}
+        <div style={s.col}>
+          <section style={s.section}>
+            <div style={s.sectionHeader}>
+              <span style={s.sectionIcon}>🌐</span>
+              <span style={s.sectionTitle}>관련 뉴스 피드</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {articles.map(art => (
+                <a key={art.article_id} href={art.url} target="_blank" rel="noopener noreferrer" style={s.articleCard}>
+                  <div style={s.articleTop}>
+                    <span style={s.articlePublisher}>{art.publisher}</span>
+                    <span style={s.articleTime}>{timeAgo(art.published_at)}</span>
+                  </div>
+                  <div style={s.articleTitle}>{art.title}</div>
+                  <p style={s.articleSummary}>{art.summary}</p>
+                  <div style={s.articleReadMore}>기사 전문 보기 →</div>
+                </a>
+              ))}
+              {articles.length === 0 && (
+                <div style={{ fontSize: 13, color: '#475569', textAlign: 'center', padding: '24px 0' }}>
+                  관련 뉴스가 없습니다
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        {/* 3열: 후원하기 */}
         <div style={s.colRight}>
-          {/* 후원 단체 - 전체 공간 */}
           <div style={s.supportSection}>
             <div style={s.cardLabel}>♡ Support Relief</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1, overflowY: 'auto' }}>
               {orgs.map(org => (
                 <div key={org.org_id} style={s.orgCard}>
-                  <div style={s.orgHeader}>
-                    <div style={s.orgAvatar}>{org.org_name[0]}</div>
-                    <div>
-                      <div style={s.orgName}>{org.org_name}</div>
-                      {org.verified_by_admin && (
-                        <div style={s.verifiedBadge}>✓ 관리자 인증</div>
-                      )}
-                    </div>
+                  <img
+                    src={`https://picsum.photos/seed/${org.org_id}/600/140`}
+                    alt=""
+                    style={s.orgImage}
+                  />
+                  <div style={s.orgCardBody}>
+                    <div style={s.orgName}>{org.org_name}</div>
+                    {org.verified_by_admin && (
+                      <div style={s.verifiedBadge}>✓ 관리자 인증</div>
+                    )}
+                    <p style={s.orgDesc}>{org.activity_summary}</p>
+                    {org.donation_link && (
+                      <a href={org.donation_link} target="_blank" rel="noopener noreferrer" style={s.donateBtn}>
+                        후원하기 ↗
+                      </a>
+                    )}
+                    {org.volunteer_link && (
+                      <a href={org.volunteer_link} target="_blank" rel="noopener noreferrer" style={{ ...s.donateBtn, background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', color: '#818cf8', marginTop: 6 }}>
+                        봉사 신청 ↗
+                      </a>
+                    )}
                   </div>
-                  <p style={s.orgDesc}>{org.activity_summary}</p>
-                  {org.donation_link && (
-                    <a href={org.donation_link} target="_blank" rel="noopener noreferrer" style={s.donateBtn}>
-                      후원하기 ↗
-                    </a>
-                  )}
-                  {org.volunteer_link && (
-                    <a href={org.volunteer_link} target="_blank" rel="noopener noreferrer" style={{ ...s.donateBtn, background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', color: '#818cf8', marginTop: 6 }}>
-                      봉사 신청 ↗
-                    </a>
-                  )}
                 </div>
               ))}
               {orgs.length === 0 && (
@@ -229,27 +218,21 @@ const s: Record<string, React.CSSProperties> = {
   liveAlert: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: '#fca5a5', fontWeight: 600 },
   liveDot: { width: 7, height: 7, borderRadius: '50%', background: '#ef4444', display: 'inline-block', boxShadow: '0 0 6px #ef4444' },
   avatar: { width: 32, height: 32, borderRadius: '50%', background: '#1e293b', border: '2px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 },
-  titleBar: { padding: '16px 28px 14px', borderBottom: '1px solid rgba(255,255,255,0.07)', background: '#0d1117', flexShrink: 0 },
-  backBtn: { background: 'none', border: 'none', color: '#64748b', fontSize: 13, cursor: 'pointer', marginBottom: 10, padding: 0 },
-  titleMain: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 },
-  riskBadge: { fontSize: 11, padding: '3px 10px', borderRadius: 5, fontWeight: 700, letterSpacing: 0.5 },
-  eventTitle: { fontSize: 22, fontWeight: 900, color: '#f1f5f9', margin: 0, letterSpacing: 0.5 },
-  titleMeta: { fontSize: 12, color: '#64748b', display: 'flex', gap: 16, marginBottom: 10 },
+  titleBar: { position: 'relative', padding: 0, borderBottom: '1px solid rgba(255,255,255,0.07)', flexShrink: 0, overflow: 'hidden' },
+  titleBgImg: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
+  titleOverlay: { position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(8,11,20,0.92) 50%, rgba(8,11,20,0.6) 100%)' },
+  titleContent: { position: 'relative', zIndex: 1, padding: '24px 32px 22px' },
+  backBtn: { background: 'none', border: 'none', color: '#94a3b8', fontSize: 13, cursor: 'pointer', marginBottom: 14, padding: 0 },
+  titleMain: { display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 },
+  riskBadge: { fontSize: 12, padding: '4px 12px', borderRadius: 5, fontWeight: 700, letterSpacing: 0.5 },
+  eventTitle: { fontSize: 32, fontWeight: 900, color: '#f1f5f9', margin: 0, letterSpacing: 0.5 },
+  titleMeta: { fontSize: 12, color: '#94a3b8', display: 'flex', gap: 20, marginBottom: 12 },
+  titleSummary: { fontSize: 14, color: '#cbd5e1', lineHeight: 1.7, marginBottom: 16, maxWidth: 760 },
   titleActions: { display: 'flex', gap: 8 },
-  actionBtn: { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '7px 16px', color: '#94a3b8', fontSize: 12, cursor: 'pointer' },
-  actionBtnPrimary: { background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 6, padding: '7px 16px', color: '#818cf8', fontSize: 12, cursor: 'pointer', fontWeight: 600 },
-  body: { display: 'flex', flex: 1, gap: 0, overflow: 'hidden' },
-  colLeft: { width: 260, background: '#0d1117', borderRight: '1px solid rgba(255,255,255,0.07)', display: 'flex', flexDirection: 'column', flexShrink: 0, overflowY: 'auto' },
-  miniMapPlaceholder: { position: 'relative', height: 240, background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderBottom: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  liveRegionBadge: { position: 'absolute', top: 12, left: 12, background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 6, padding: '4px 10px', fontSize: 11, color: '#fca5a5', fontWeight: 600 },
-  miniMapCoords: { position: 'absolute', bottom: 12, left: 12 },
-  coordBadge: { background: 'rgba(0,0,0,0.6)', borderRadius: 8, padding: '8px 12px', backdropFilter: 'blur(8px)' },
-  warningOrb: { width: 60, height: 60, borderRadius: '50%', background: 'rgba(239,68,68,0.2)', border: '2px solid rgba(239,68,68,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(239,68,68,0.3)' },
-  summaryCard: { padding: 16 },
-  cardLabel: { fontSize: 11, color: '#64748b', letterSpacing: 1, fontWeight: 600, marginBottom: 10, textTransform: 'uppercase' as const },
-  summaryText: { fontSize: 13, color: '#94a3b8', lineHeight: 1.7, margin: 0 },
-  statusPill: { fontSize: 11, padding: '3px 10px', borderRadius: 20, fontWeight: 600 },
-  colCenter: { flex: 1, overflowY: 'auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 24 },
+  actionBtn: { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, padding: '7px 16px', color: '#94a3b8', fontSize: 12, cursor: 'pointer' },
+  actionBtnPrimary: { background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)', borderRadius: 6, padding: '7px 16px', color: '#818cf8', fontSize: 12, cursor: 'pointer', fontWeight: 600 },
+  body: { display: 'flex', flex: 1, overflow: 'hidden' },
+  col: { flex: 1, overflowY: 'auto', padding: '20px 24px', borderRight: '1px solid rgba(255,255,255,0.07)' },
   section: {},
   sectionHeader: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 },
   sectionIcon: { fontSize: 16 },
@@ -269,18 +252,14 @@ const s: Record<string, React.CSSProperties> = {
   articleTitle: { fontSize: 14, fontWeight: 600, color: '#e2e8f0', marginBottom: 6, lineHeight: 1.4 },
   articleSummary: { fontSize: 12, color: '#64748b', lineHeight: 1.5, margin: 0 },
   articleReadMore: { fontSize: 11, color: '#818cf8', marginTop: 8 },
-  colRight: { width: 300, background: '#0d1117', borderLeft: '1px solid rgba(255,255,255,0.07)', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0, overflow: 'hidden' },
-  emergencyCard: { background: '#111827', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: 14 },
-  emergencyBtns: { display: 'flex', gap: 10, marginTop: 10 },
-  emergencyCall: { flex: 1, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px', textAlign: 'center' },
-  emergencyCallLabel: { fontSize: 9, color: '#64748b', letterSpacing: 1, marginBottom: 4 },
-  emergencyCallNum: { fontSize: 24, fontWeight: 900, color: '#f87171' },
+  colRight: { flex: 1, background: '#0d1117', borderLeft: '1px solid rgba(255,255,255,0.07)', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16, overflow: 'hidden' },
+  cardLabel: { fontSize: 11, color: '#64748b', letterSpacing: 1, fontWeight: 600, marginBottom: 10, textTransform: 'uppercase' as const },
   supportSection: { flex: 1, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 },
-  orgCard: { background: '#111827', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: 14 },
-  orgHeader: { display: 'flex', gap: 10, marginBottom: 10 },
-  orgAvatar: { width: 36, height: 36, borderRadius: '50%', background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#818cf8', flexShrink: 0 },
+  orgCard: { background: '#111827', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, overflow: 'hidden' },
+  orgImage: { width: '100%', height: 140, objectFit: 'cover' as const, display: 'block' },
+  orgCardBody: { padding: 14 },
   orgName: { fontSize: 13, fontWeight: 600, color: '#e2e8f0' },
-  verifiedBadge: { fontSize: 10, color: '#4ade80', marginTop: 2 },
+  verifiedBadge: { fontSize: 10, color: '#4ade80', marginTop: 2, marginBottom: 8 },
   orgDesc: { fontSize: 12, color: '#64748b', lineHeight: 1.5, margin: '0 0 10px' },
   donateBtn: { display: 'block', textAlign: 'center', background: '#16a34a', border: 'none', borderRadius: 6, padding: '9px', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', textDecoration: 'none', transition: 'opacity 0.2s' },
   verifiedNote: { background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.15)', borderRadius: 10, padding: 14, display: 'flex', gap: 10, alignItems: 'flex-start' },

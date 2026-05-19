@@ -18,7 +18,6 @@ L.Icon.Default.mergeOptions({
 const CATEGORIES: { key: DisasterType | 'all'; label: string; icon: string }[] = [
   { key: 'all',        label: 'All Alerts', icon: '🏠' },
   { key: 'wildfire',   label: '산불',       icon: '🔥' },
-  { key: 'heavy_rain', label: '호우',       icon: '🌧️' },
   { key: 'typhoon',    label: '태풍',       icon: '🌀' },
   { key: 'earthquake', label: '지진',       icon: '⚡' },
 ]
